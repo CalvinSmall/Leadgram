@@ -18,6 +18,7 @@ on:
           - Nicegram
           - Swiftgram
           - Turrit
+          - Vartagram
 
       bundle_id:
         description: "Bundle ID"
@@ -26,9 +27,10 @@ on:
         type: choice
         options:
           - ph.telegra.Telegraph
-          - com.nicegram.Nicegram
+          - app.nicegram
           - app.swiftgram.ios
-          - io.turrit.Turrit
+          - com.seastar.turrit
+          - org.cpartisans.vartagram
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
