@@ -1,4 +1,4 @@
-# Lead 1.3.6
+# Lead 1.3.7
 A simple Telegram iOS Tweak.
 
 To Open Tweak menu : Open settings and scroll down to "Ask a Question" and hold press to pull up the settings.
