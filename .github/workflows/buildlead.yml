@@ -113,7 +113,7 @@ jobs:
 
       - name: Inject Into IPA
         run: |
-          tweaks="resources/com.w3ltyyy.lead_*.deb zxPluginsInject.dylib FilePickerFix.dylib"
+          tweaks="resources/com.w3ltyyy.lead_*.deb zxPluginsInject.dylib resources/FilePickerFix.dylib"
           if [ "${{ inputs.bundle_id }}" = "app.swiftgram.ios" ]; then
             tweaks="$tweaks resources/SwiftgramCrack.dylib"
           fi
