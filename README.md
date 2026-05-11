@@ -3,7 +3,7 @@ A simple Telegram iOS Tweak.
 
 To Open Tweak menu : Open settings and scroll down to "Ask a Question" and hold press to pull up the settings.
 
-
+### NOTE: Infinite Updating... bug is fixed in 12.7 versions. disable save restricted media to fix it in older versions.
 ### Lead Features
 - Disable Ads
 - Ghost Mode
