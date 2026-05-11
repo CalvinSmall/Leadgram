@@ -38,14 +38,13 @@ jobs:
       - name: Resolve Bundle ID
         id: resolve
         run: |
-          declare -A bundle_map
-          bundle_map["Telegram"]="ph.telegra.Telegraph"
-          bundle_map["Nicegram"]="app.nicegram"
-          bundle_map["Swiftgram"]="app.swiftgram.ios"
-          bundle_map["Turrit"]="com.seastar.turrit"
-          bundle_map["Vartagram"]="org.cpartisans.vartagram"
-
-          BUNDLE_ID="${bundle_map[${{ inputs.display_name }}]}"
+          case "${{ inputs.display_name }}" in
+            "Telegram")   BUNDLE_ID="ph.telegra.Telegraph" ;;
+            "Nicegram")   BUNDLE_ID="app.nicegram" ;;
+            "Swiftgram")  BUNDLE_ID="app.swiftgram.ios" ;;
+            "Turrit")     BUNDLE_ID="com.seastar.turrit" ;;
+            "Vartagram")  BUNDLE_ID="org.cpartisans.vartagram" ;;
+          esac
           echo "bundle_id=$BUNDLE_ID" >> $GITHUB_OUTPUT
 
       - name: Hide Sensitive Inputs
