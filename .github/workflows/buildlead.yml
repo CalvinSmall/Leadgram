@@ -20,18 +20,6 @@ on:
           - Turrit
           - Vartagram
 
-      bundle_id:
-        description: "Bundle ID"
-        default: "app.swiftgram.ios"
-        required: true
-        type: choice
-        options:
-          - ph.telegra.Telegraph
-          - app.nicegram
-          - app.swiftgram.ios
-          - com.seastar.turrit
-          - org.cpartisans.vartagram
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -47,10 +35,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Resolve Bundle ID
+        id: resolve
+        run: |
+          declare -A bundle_map
+          bundle_map["Telegram"]="ph.telegra.Telegraph"
+          bundle_map["Nicegram"]="app.nicegram"
+          bundle_map["Swiftgram"]="app.swiftgram.ios"
+          bundle_map["Turrit"]="com.seastar.turrit"
+          bundle_map["Vartagram"]="org.cpartisans.vartagram"
+
+          BUNDLE_ID="${bundle_map[${{ inputs.display_name }}]}"
+          echo "bundle_id=$BUNDLE_ID" >> $GITHUB_OUTPUT
+
       - name: Hide Sensitive Inputs
         uses: levibostian/action-hide-sensitive-inputs@v1
         with:
-          exclude_inputs: bundle_id,display_name
+          exclude_inputs: display_name
 
       - name: Download and Validate IPA
         run: |
@@ -114,12 +115,12 @@ jobs:
       - name: Inject Into IPA
         run: |
           tweaks="resources/com.w3ltyyy.lead_*.deb zxPluginsInject.dylib resources/FilePickerFix.dylib"
-          if [ "${{ inputs.bundle_id }}" = "app.swiftgram.ios" ]; then
+          if [ "${{ steps.resolve.outputs.bundle_id }}" = "app.swiftgram.ios" ]; then
             tweaks="$tweaks resources/SwiftgramCrack.dylib"
           fi
           cyan -i telegram.ipa -o ${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }}.ipa \
             -f $tweaks \
-            -n "${{ inputs.display_name }}" -b ${{ inputs.bundle_id }}
+            -n "${{ inputs.display_name }}" -b ${{ steps.resolve.outputs.bundle_id }}
 
       - name: Create a Release
         uses: softprops/action-gh-release@v2.6.2
