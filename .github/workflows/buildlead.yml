@@ -125,7 +125,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: tg-ipa${{ github.run_number }}
-          name: ${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }} (${{ github.run_number }})
+          name: ${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }}
           files: ${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }}.ipa
           draft: false
 
