@@ -64,8 +64,13 @@ jobs:
       - name: Get App Version
         run: |
           unzip -q telegram.ipa -d tgextracted
-          APP_NAME=$(ls tgextracted/Payload/)
-          echo "APP_VERSION=$(grep -A 1 '<key>CFBundleShortVersionString</key>' "tgextracted/Payload/$APP_NAME/Info.plist" | grep '<string>' | awk -F'[><]' '{print $3}')" >> $GITHUB_ENV
+          APP_PAYLOAD=$(find tgextracted/Payload/ -maxdepth 1 -mindepth 1 -type d | head -n 1)
+          if [[ -z "$APP_PAYLOAD" ]]; then
+            echo "::error::Could not find app bundle in Payload/"
+            exit 1
+          fi
+          VERSION=$(plutil -extract CFBundleShortVersionString raw -o - "$APP_PAYLOAD/Info.plist")
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
           rm -rf tgextracted
 
       - name: Get Lead Version
@@ -103,7 +108,10 @@ jobs:
           mv *.sdk $THEOS/sdks
 
       - name: Install cyan
-        run: pipx install --force https://github.com/asdfzxcvbn/pyzule-rw/archive/main.zip
+        run: |
+          if ! command -v cyan &> /dev/null; then
+            pipx install --force https://github.com/asdfzxcvbn/pyzule-rw/archive/main.zip
+          fi
 
       - name: Clone and Build zxPluginsInject
         run: |
@@ -113,19 +121,31 @@ jobs:
 
       - name: Inject Into IPA
         run: |
-          tweaks="resources/com.w3ltyyy.lead_*.deb zxPluginsInject.dylib resources/FilePickerFix.dylib"
+          shopt -s nullglob
+          tweaks=("zxPluginsInject.dylib")
+          for file in resources/*.{deb,dylib}; do
+            tweaks+=("$file")
+          done
           if [ "${{ steps.resolve.outputs.bundle_id }}" = "app.swiftgram.ios" ]; then
-            tweaks="$tweaks resources/SwiftgramCrack.dylib"
+            tweaks+=("resources/SwiftgramCrack.dylib")
           fi
-          cyan -i telegram.ipa -o ${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }}.ipa \
-            -f $tweaks \
-            -n "${{ inputs.display_name }}" -b ${{ steps.resolve.outputs.bundle_id }}
+          for t in "${tweaks[@]}"; do
+            if [[ ! -f "$t" ]]; then
+              echo "::error::Tweak file $t not found!"
+              exit 1
+            fi
+          done
+          cyan -i telegram.ipa \
+            -o "${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }}.ipa" \
+            -f "${tweaks[@]}" \
+            -n "${{ inputs.display_name }}" \
+            -b "${{ steps.resolve.outputs.bundle_id }}"
 
       - name: Create a Release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: tg-ipa${{ github.run_number }}
-          name: ${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }} (${{ github.run_number }})
+          name: ${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }}
           files: ${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }}.ipa
           draft: false
 

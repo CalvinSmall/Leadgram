@@ -1,4 +1,4 @@
-# Lead 1.3.7
+# Lead 1.3.9
 A simple Telegram iOS Tweak.
 
 To Open Tweak menu : Open settings and scroll down to "Ask a Question" and hold press to pull up the settings.
@@ -15,4 +15,4 @@ To Open Tweak menu : Open settings and scroll down to "Ask a Question" and hold 
 - Anti-Revoke — deleted messages no longer disappear for you.
 - Anti-Edit — view the original text even after it’s been edited. (Work in Progress)
   
-Tweak by [@Lead](https://t.me/Leadgramm)
+Tweak by [@Lead](https://t.me/Leadgramm) and Changelogs can be found inside the channel.
