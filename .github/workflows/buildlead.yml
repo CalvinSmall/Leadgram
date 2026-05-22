@@ -126,6 +126,9 @@ jobs:
           for file in resources/*.{deb,dylib}; do
             tweaks+=("$file")
           done
+          if [ "${{ steps.resolve.outputs.bundle_id }}" = "app.swiftgram.ios" ]; then
+            tweaks+=("resources/SwiftgramCrack.dylib")
+          fi
           for t in "${tweaks[@]}"; do
             if [[ ! -f "$t" ]]; then
               echo "::error::Tweak file $t not found!"
@@ -134,7 +137,7 @@ jobs:
           done
           cyan -i telegram.ipa \
             -o "${{ inputs.display_name }}_${{ env.APP_VERSION }}_${{ env.LEAD_VERSION }}.ipa" \
-            -f "${tweaks[*]}" \
+            -f "${tweaks[@]}" \
             -n "${{ inputs.display_name }}" \
             -b "${{ steps.resolve.outputs.bundle_id }}"
 
