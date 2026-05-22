@@ -124,7 +124,9 @@ jobs:
           shopt -s nullglob
           tweaks=("zxPluginsInject.dylib")
           for file in resources/*.{deb,dylib}; do
-            tweaks+=("$file")
+            if [[ "$file" != "resources/SwiftgramCrack.dylib" ]]; then
+              tweaks+=("$file")
+            fi
           done
           if [ "${{ steps.resolve.outputs.bundle_id }}" = "app.swiftgram.ios" ]; then
             tweaks+=("resources/SwiftgramCrack.dylib")
